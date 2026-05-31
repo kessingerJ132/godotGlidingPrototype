@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3 uid="uid://bvlnyb10neiec"]
+
+[ext_resource type="Script" uid="uid://bh5m4qqeabhlp" path="res://steve.gd" id="1_4lebt"]
+[ext_resource type="Script" uid="uid://cucwrdm7n3j4c" path="res://steve_melee_hit_box.gd" id="2_8vtpt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wgrr5"]
+albedo_color = Color(0, 0.639743, 0.727489, 1)
+metallic = 0.25
+roughness = 0.05
+rim_tint = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_873yi"]
+material = SubResource("StandardMaterial3D_wgrr5")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qtfiq"]
+height = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m4ugo"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bh3ft"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8vtpt"]
+
+[node name="Steve" type="CharacterBody3D" groups=["Player"]]
+collision_layer = 17
+collision_mask = 17
+script = ExtResource("1_4lebt")
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_873yi")
+
+[node name="face" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.5)
+mesh = SubResource("CylinderMesh_qtfiq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." groups=["PlayerHurtbox"]]
+shape = SubResource("BoxShape3D_m4ugo")
+
+[node name="cameraController" type="Node3D" parent="." groups=["PlayerHurtbox"]]
+top_level = true
+
+[node name="cameraTarget" type="Node3D" parent="cameraController"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1, 3)
+
+[node name="Camera3D" type="Camera3D" parent="cameraController/cameraTarget"]
+
+[node name="MeleeHitBox" type="Area3D" parent="." groups=["PlayerHitbox"]]
+script = ExtResource("2_8vtpt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeleeHitBox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+shape = SubResource("BoxShape3D_bh3ft")
+disabled = true
+
+[node name="HurtBox" type="Area3D" parent="." groups=["PlayerHurtbox"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtBox"]
+shape = SubResource("BoxShape3D_8vtpt")
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]
